@@ -7,6 +7,8 @@ import './App.css'
 import Navbar from './components/Navbar'
 import ScrollProgress from './components/ScrollProgress'
 import ScrollToTop from './components/ScrollToTop'
+import ParticleCanvas from './components/ParticleCanvas'
+import CustomCursor from './components/CustomCursor'
 import Footer from './components/Footer'
 
 // Pages
@@ -25,7 +27,7 @@ function MainSections({ sharedProps }) {
     if (path) {
       const el = document.getElementById(path)
       if (el) {
-        const navOffset = 75
+        const navOffset = 80
         const elementPosition = el.getBoundingClientRect().top
         const offsetPosition = elementPosition + window.pageYOffset - navOffset
         window.scrollTo({ top: offsetPosition, behavior: 'smooth' })
@@ -53,83 +55,60 @@ function App() {
   const durFast = prefersReducedMotion ? 0 : 0.3
 
   const revealVariants = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { opacity: 0, y: 24 },
     show: {
       opacity: 1,
       y: 0,
       transition: { duration: dur, ease: [0.16, 1, 0.3, 1] },
-    },
-  }
-
-  const heroTitleVariants = {
-    hidden: { opacity: 0, y: 20, filter: 'blur(4px)' },
-    show: {
-      opacity: 1,
-      y: 0,
-      filter: 'blur(0px)',
-      transition: { duration: dur, ease: [0.16, 1, 0.3, 1] },
-    },
-  }
-
-  const chipContainerVariants = {
-    hidden: {},
-    show: { transition: { staggerChildren: 0.04 } },
-  }
-
-  const chipVariants = {
-    hidden: { opacity: 0, scale: 0.95, y: 6 },
-    show: {
-      opacity: 1,
-      scale: 1,
-      y: 0,
-      transition: { duration: durFast, ease: [0.16, 1, 0.3, 1] },
     },
   }
 
   const handleMouseMove = (e) => {
     if (prefersReducedMotion) return
-    const rect = e.currentTarget.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
-    e.currentTarget.style.setProperty('--spot-x', `${x}px`)
-    e.currentTarget.style.setProperty('--spot-y', `${y}px`)
+    const x = e.clientX
+    const y = e.clientY
+    document.documentElement.style.setProperty('--spot-x', `${x}px`)
+    document.documentElement.style.setProperty('--spot-y', `${y}px`)
   }
 
   const sharedProps = {
     durFast,
     revealVariants,
-    heroTitleVariants,
-    chipContainerVariants,
-    chipVariants,
     prefersReducedMotion,
   }
 
   return (
     <Router>
       <div className="page" onMouseMove={handleMouseMove}>
+        {/* Glowing Trailing Halo Custom Cursor */}
+        <CustomCursor />
+
         {/* Top Scroll Progress Loadbar & Initial Load Indicator */}
         <ScrollProgress />
 
-        {/* Ambient Animated Gradient Orbs */}
+        {/* Interactive Cosmic Particle Canvas Simulation */}
+        <ParticleCanvas />
+
+        {/* Atmospheric Ambient Gradient Orbs */}
         <div className="bg" aria-hidden="true">
           <motion.div
             className="orb orb1"
-            animate={prefersReducedMotion ? { x: 0, y: 0 } : { x: [0, 20, 0], y: [0, -15, 0] }}
-            transition={prefersReducedMotion ? { duration: 0 } : { duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-          />
-          <motion.div
-            className="orb orb2"
-            animate={prefersReducedMotion ? { x: 0, y: 0 } : { x: [0, -20, 0], y: [0, 10, 0] }}
+            animate={prefersReducedMotion ? { x: 0, y: 0 } : { x: [0, 30, 0], y: [0, -20, 0] }}
             transition={prefersReducedMotion ? { duration: 0 } : { duration: 12, repeat: Infinity, ease: 'easeInOut' }}
           />
           <motion.div
-            className="orb orb3"
-            animate={prefersReducedMotion ? { x: 0, y: 0 } : { x: [0, 15, 0], y: [0, 15, 0] }}
+            className="orb orb2"
+            animate={prefersReducedMotion ? { x: 0, y: 0 } : { x: [0, -30, 0], y: [0, 20, 0] }}
             transition={prefersReducedMotion ? { duration: 0 } : { duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+          />
+          <motion.div
+            className="orb orb3"
+            animate={prefersReducedMotion ? { x: 0, y: 0 } : { x: [0, 20, 0], y: [0, 25, 0] }}
+            transition={prefersReducedMotion ? { duration: 0 } : { duration: 16, repeat: Infinity, ease: 'easeInOut' }}
           />
         </div>
 
-        {/* Navigation */}
+        {/* HUD Navigation */}
         <Navbar />
 
         {/* Main Content Area */}
@@ -137,7 +116,7 @@ function App() {
           <MainSections sharedProps={sharedProps} />
         </main>
 
-        {/* Fast Floating Scroll-To-Top Button */}
+        {/* Floating Quick-Scroll Button */}
         <ScrollToTop />
       </div>
     </Router>

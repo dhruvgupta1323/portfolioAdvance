@@ -1,87 +1,169 @@
-import React from 'react'
-import { motion } from 'framer-motion'
+import React, { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { projects } from '../data'
-import { FaGithub, FaLink, FaLayerGroup } from 'react-icons/fa6'
+import Card3D from '../components/Card3D'
+import { FaGithub, FaArrowUpRightFromSquare, FaLayerGroup, FaFilter, FaVideo } from 'react-icons/fa6'
+import { sound } from '../utils/sound'
+
+const categories = ['All', 'AI / ML', 'Computer Vision', 'Full Stack', 'Video & Cinema']
 
 function Projects({ revealVariants }) {
+  const [activeCategory, setActiveCategory] = useState('All')
+
+  const filteredProjects = activeCategory === 'All'
+    ? projects
+    : projects.filter(p => p.category === activeCategory)
+
+  const handleFilterClick = (cat) => {
+    sound.playClick()
+    setActiveCategory(cat)
+  }
+
   return (
     <motion.div
-      className="w-full px-6 md:px-12 lg:px-24 py-24 min-h-screen bg-white relative"
+      className="w-full max-w-7xl mx-auto px-6 md:px-12 py-24 relative"
       id="projects"
       variants={revealVariants}
       initial="hidden"
       whileInView="show"
-      viewport={{ once: true }}
+      viewport={{ once: true, margin: '-50px' }}
     >
-      <div className="relative z-10">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-6">
-          <div className="max-w-2xl">
-            <h2 className="text-indigo-600 font-mono font-bold tracking-[0.2em] uppercase text-xs mb-3">Portfolio</h2>
-            <h3 className="text-4xl md:text-5xl font-black text-slate-900 leading-tight">
-              Featured Projects & <br /> Case Studies
-            </h3>
+      {/* Section Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
+        <div>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/40 border border-cyan-500/30 text-cyan-400 font-mono text-xs uppercase tracking-[0.2em] mb-4">
+            <FaLayerGroup size={10} /> Artifacts & Deployments
           </div>
-          <p className="text-slate-500 font-medium max-w-xs text-sm mb-2">
-            A collection of my work in AI, Computer Vision, and full-stack development.
-          </p>
+          <h2 className="text-4xl md:text-6xl font-black text-white leading-tight tracking-tight">
+            Featured Systems & <br />
+            <span className="text-gradient-cyan">Creative Portfolios</span>
+          </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-          {projects.map((project, i) => (
-            <motion.article
-              key={project.title}
-              className="group relative bg-white border border-slate-100 rounded-[40px] overflow-hidden hover:border-indigo-200 transition-all duration-500 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.08)]"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
+        <p className="text-slate-400 font-normal max-w-md text-sm md:text-base leading-relaxed">
+          Production AI models, edge hardware computer vision, and cinematic motion edits engineered for performance.
+        </p>
+      </div>
+
+      {/* Category Filter Pills */}
+      <div className="flex flex-wrap gap-2.5 mb-12">
+        {categories.map((cat) => {
+          const isActive = activeCategory === cat
+          return (
+            <button
+              key={cat}
+              onClick={() => handleFilterClick(cat)}
+              onMouseEnter={() => sound.playHover()}
+              className={`px-5 py-2.5 rounded-xl font-mono text-xs font-bold tracking-wider transition-all cursor-pointer relative ${
+                isActive
+                  ? 'bg-cyan-500 text-slate-950 shadow-[0_0_20px_rgba(0,245,255,0.4)]'
+                  : 'bg-slate-900/60 text-slate-400 border border-slate-800 hover:border-slate-700 hover:text-white backdrop-blur-md'
+              }`}
             >
-              {/* Card Header Color Strip */}
-              <div className="h-2 w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-blue-500"></div>
+              {cat}
+            </button>
+          )
+        })}
+      </div>
 
-              <div className="p-8 md:p-10 flex flex-col h-full">
-                <div className="flex justify-between items-start mb-6">
-                  <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500 shadow-sm">
-                    <FaLayerGroup size={20} />
+      {/* Projects Grid */}
+      <motion.div
+        layout
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+      >
+        <AnimatePresence>
+          {filteredProjects.map((project, i) => (
+            <motion.div
+              layout
+              key={project.title}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.4 }}
+              className="h-full"
+            >
+              <Card3D glowColor="rgba(0, 245, 255, 0.25)" className="p-8 h-full flex flex-col justify-between">
+                <div>
+                  {/* Top Bar with Category & Links */}
+                  <div className="flex justify-between items-start mb-6">
+                    <div className="flex flex-col gap-1">
+                      <span className="px-3 py-1 bg-cyan-950/40 border border-cyan-500/30 text-cyan-300 font-mono text-[10px] font-bold uppercase tracking-wider rounded-lg w-fit">
+                        {project.category}
+                      </span>
+                      {project.tag && (
+                        <span className="text-[11px] font-mono text-slate-500 font-semibold">
+                          // {project.tag}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex gap-3">
+                      {project.github && (
+                        <a
+                          href={project.github}
+                          target="_blank"
+                          rel="noreferrer"
+                          aria-label="View Source on GitHub"
+                          onMouseEnter={() => sound.playHover()}
+                          className="p-2.5 bg-slate-950/80 rounded-xl text-slate-400 hover:text-cyan-400 hover:border-cyan-500/40 border border-slate-800 transition-colors"
+                        >
+                          <FaGithub size={16} />
+                        </a>
+                      )}
+                      {project.demo && project.demo !== '#' && (
+                        <a
+                          href={project.demo}
+                          target="_blank"
+                          rel="noreferrer"
+                          aria-label="View Live Project"
+                          onMouseEnter={() => sound.playHover()}
+                          className="p-2.5 bg-slate-950/80 rounded-xl text-slate-400 hover:text-cyan-400 hover:border-cyan-500/40 border border-slate-800 transition-colors"
+                        >
+                          <FaArrowUpRightFromSquare size={14} />
+                        </a>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex gap-4">
-                    <a href="#" className="text-slate-400 hover:text-indigo-600 transition-colors"><FaGithub size={20} /></a>
-                    <a href="#" className="text-slate-400 hover:text-indigo-600 transition-colors"><FaLink size={20} /></a>
+
+                  {/* Project Title */}
+                  <h3 className="text-xl font-bold text-white mb-3 hover:text-cyan-300 transition-colors">
+                    {project.title}
+                  </h3>
+
+                  {/* Project Description */}
+                  <p className="text-slate-400 text-sm leading-relaxed mb-6">
+                    {project.description}
+                  </p>
+
+                  {/* Tech Stack Chips */}
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    {project.stack.map((tech) => (
+                      <span
+                        key={tech}
+                        className="px-2.5 py-1 bg-slate-950 border border-slate-800/80 text-slate-300 rounded-lg text-[10px] font-mono font-bold uppercase tracking-wider"
+                      >
+                        {tech}
+                      </span>
+                    ))}
                   </div>
                 </div>
 
-                <h4 className="text-2xl font-black text-slate-900 mb-4 tracking-tight group-hover:text-indigo-600 transition-colors">
-                  {project.title}
-                </h4>
-
-                <p className="text-slate-500 text-sm leading-relaxed mb-8 flex-grow">
-                  {project.description}
-                </p>
-
-                <div className="flex flex-wrap gap-2 mb-8">
-                  {project.stack.map((tech) => (
-                    <span key={tech} className="px-3 py-1 bg-slate-50 text-slate-600 rounded-lg text-[11px] font-black uppercase tracking-wider border border-slate-100 group-hover:bg-white transition-colors">
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-
-                <ul className="space-y-3 pt-6 border-t border-slate-50">
-                  {project.highlights.map((highlight, idx) => (
-                    <li key={idx} className="flex items-start gap-3 text-xs text-slate-500 font-bold">
-                      <span className="mt-1 w-1.5 h-1.5 bg-indigo-500 rounded-full shrink-0"></span>
-                      {highlight}
+                {/* Highlights */}
+                <ul className="space-y-2.5 pt-6 border-t border-slate-800/80">
+                  {project.highlights.map((h, idx) => (
+                    <li key={idx} className="flex items-start gap-2.5 text-xs text-slate-400">
+                      <span className="mt-1.5 w-1.5 h-1.5 bg-cyan-400 rounded-full shrink-0 shadow-[0_0_8px_#00f5ff]"></span>
+                      <span>{h}</span>
                     </li>
                   ))}
                 </ul>
-              </div>
-            </motion.article>
+              </Card3D>
+            </motion.div>
           ))}
-        </div>
-      </div>
+        </AnimatePresence>
+      </motion.div>
     </motion.div>
   )
 }
 
 export default Projects
-

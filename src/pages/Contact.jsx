@@ -1,37 +1,42 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import emailjs from '@emailjs/browser'
-
+import Card3D from '../components/Card3D'
 import {
   FaEnvelope,
   FaPhone,
   FaLocationDot,
   FaGithub,
   FaLinkedin,
-  FaTwitter,
+  FaInstagram,
   FaPaperPlane,
+  FaTerminal,
+  FaCheck,
+  FaTriangleExclamation,
 } from 'react-icons/fa6'
+import { sound } from '../utils/sound'
 
 function Contact({ revealVariants }) {
   const form = useRef()
+  const [status, setStatus] = useState({ state: 'idle', message: '' })
 
   const contactInfo = [
     {
       icon: FaEnvelope,
-      label: 'Email',
+      label: 'TRANSMISSION // EMAIL',
       value: 'dhruvgupta135790@gmail.com',
       link: 'mailto:dhruvgupta135790@gmail.com',
     },
     {
       icon: FaPhone,
-      label: 'Phone',
+      label: 'VOICE // TELEMETRY',
       value: '+91 8852021323',
       link: 'tel:+918852021323',
     },
     {
       icon: FaLocationDot,
-      label: 'Location',
-      value: 'Alwar, Rajasthan, India',
+      label: 'GEOLOCATION',
+      value: 'Alwar / Jaipur, Rajasthan, India',
       link: '#',
     },
   ]
@@ -48,14 +53,16 @@ function Contact({ revealVariants }) {
       label: 'LinkedIn',
     },
     {
-      icon: FaTwitter,
-      link: '#',
-      label: 'Twitter',
+      icon: FaInstagram,
+      link: 'https://www.instagram.com/_.dhruv._.x/',
+      label: 'Instagram',
     },
   ]
 
   const sendEmail = (e) => {
     e.preventDefault()
+    sound.playClick()
+    setStatus({ state: 'sending', message: 'TRANSMITTING PACKETS...' })
 
     emailjs
       .sendForm(
@@ -66,69 +73,75 @@ function Contact({ revealVariants }) {
       )
       .then(
         () => {
-          alert('Message Sent Successfully!')
+          setStatus({ state: 'success', message: 'TRANSMISSION CONFIRMED // MESSAGE SENT' })
           form.current.reset()
+          setTimeout(() => setStatus({ state: 'idle', message: '' }), 6000)
         },
         (error) => {
-          console.log(error.text)
-          alert('Failed to send message')
+          console.error(error.text)
+          setStatus({ state: 'error', message: 'DISPATCH FAILURE // PLEASE RETRY OR EMAIL DIRECTLY' })
+          setTimeout(() => setStatus({ state: 'idle', message: '' }), 6000)
         }
       )
   }
 
   return (
     <motion.div
-      className="w-full px-6 md:px-12 lg:px-24 pt-24 pb-4 min-h-0 bg-white relative"
+      className="w-full max-w-7xl mx-auto px-6 md:px-12 py-24 relative"
       id="contact"
       variants={revealVariants}
       initial="hidden"
       whileInView="show"
-      viewport={{ once: true }}
+      viewport={{ once: true, margin: '-50px' }}
     >
-      <div className="relative z-10 max-w-7xl mx-auto">
-        <div className="flex flex-col lg:flex-row gap-20">
+      {/* Section Header */}
+      <div className="mb-16">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/40 border border-cyan-500/30 text-cyan-400 font-mono text-xs uppercase tracking-[0.2em] mb-4">
+          <FaTerminal size={10} /> Transmission Console
+        </div>
+        <h2 className="text-4xl md:text-6xl font-black text-white leading-tight tracking-tight">
+          Initialize Communication. <br />
+          <span className="text-gradient-cyan">Build Something Extraordinary.</span>
+        </h2>
+      </div>
 
-          {/* Left Side */}
-          <div className="flex-1">
-            <h2 className="text-indigo-600 font-mono font-bold tracking-[0.2em] uppercase text-xs mb-3">
-              Connect
-            </h2>
-
-            <h3 className="text-5xl md:text-7xl font-black text-slate-900 leading-tight mb-8">
-              Let's build <br />
-              something <span className="text-indigo-600">Great.</span>
-            </h3>
-
-            <p className="text-lg text-slate-500 font-medium mb-12 leading-relaxed max-w-md">
-              I'm always open to discussing new projects,
-              creative ideas or opportunities to be part of your visions.
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        {/* Left Side (5 cols) */}
+        <div className="lg:col-span-5 flex flex-col justify-between space-y-8">
+          <div>
+            <p className="text-slate-300 text-base md:text-lg leading-relaxed mb-8">
+              Open for machine learning engineering collaborations, custom computer vision deployments, and cinematic visual productions.
             </p>
 
-            <div className="space-y-8 mb-16">
+            <div className="space-y-4">
               {contactInfo.map((item, i) => (
-                <motion.a
-                  key={i}
-                  href={item.link}
-                  className="flex items-center gap-6 group"
-                  whileHover={{ x: 10 }}
-                >
-                  <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
-                    <item.icon size={22} />
-                  </div>
-
-                  <div>
-                    <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">
-                      {item.label}
-                    </p>
-
-                    <p className="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
-                      {item.value}
-                    </p>
-                  </div>
-                </motion.a>
+                <Card3D key={i} glowColor="rgba(0, 245, 255, 0.2)" className="p-5">
+                  <a
+                    href={item.link}
+                    onMouseEnter={() => sound.playHover()}
+                    className="flex items-center gap-4 group"
+                  >
+                    <div className="w-12 h-12 rounded-xl bg-cyan-950/50 border border-cyan-500/30 text-cyan-400 flex items-center justify-center shrink-0 shadow-[0_0_12px_rgba(0,245,255,0.2)] group-hover:scale-105 transition-transform">
+                      <item.icon size={18} />
+                    </div>
+                    <div className="overflow-hidden">
+                      <p className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest">
+                        {item.label}
+                      </p>
+                      <p className="text-sm font-bold text-white group-hover:text-cyan-400 transition-colors truncate">
+                        {item.value}
+                      </p>
+                    </div>
+                  </a>
+                </Card3D>
               ))}
             </div>
+          </div>
 
+          <div>
+            <span className="text-xs font-mono text-slate-500 uppercase tracking-widest block mb-4">
+              // DIRECT NETWORK CHANNELS
+            </span>
             <div className="flex gap-4">
               {socials.map((social, i) => (
                 <motion.a
@@ -136,104 +149,121 @@ function Contact({ revealVariants }) {
                   href={social.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-12 h-12 border border-slate-100 rounded-xl flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:border-indigo-100 hover:bg-indigo-50 transition-all"
-                  whileHover={{ y: -5 }}
                   aria-label={social.label}
+                  onMouseEnter={() => sound.playHover()}
+                  className="p-3.5 bg-slate-900/60 border border-slate-800 rounded-xl text-slate-400 hover:text-cyan-400 hover:border-cyan-500/40 hover:bg-cyan-950/30 transition-all backdrop-blur-md"
+                  whileHover={{ y: -3, scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
                   <social.icon size={20} />
                 </motion.a>
               ))}
             </div>
           </div>
+        </div>
 
-          {/* Right Side Form */}
-          <div className="flex-1">
-            <div className="bg-slate-50 rounded-[48px] p-8 md:p-12 border border-slate-100 shadow-sm">
-              
-              <form
-                ref={form}
-                className="space-y-6"
-                onSubmit={sendEmail}
-              >
+        {/* Right Side Form (7 cols) */}
+        <div className="lg:col-span-7">
+          <Card3D glowColor="rgba(168, 85, 247, 0.25)" className="p-8 md:p-12">
+            <div className="flex items-center justify-between pb-4 mb-6 border-b border-slate-800">
+              <span className="font-mono text-xs text-purple-400 font-bold tracking-wider">
+                TRANSMISSION_FORM // ENCRYPTED
+              </span>
+              <span className="font-mono text-xs text-slate-500">256-BIT SSL</span>
+            </div>
 
-                {/* Name + Email */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">
-                      Your Name
-                    </label>
-
-                    <input
-                      type="text"
-                      name="user_name"
-                      placeholder="Dhruv Gupta"
-                      required
-                      className="w-full px-6 py-4 bg-white border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium text-slate-900"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">
-                      Email Address
-                    </label>
-
-                    <input
-                      type="email"
-                      name="user_email"
-                      placeholder="hello@example.com"
-                      required
-                      className="w-full px-6 py-4 bg-white border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium text-slate-900"
-                    />
-                  </div>
-
-                </div>
-
-                {/* Subject */}
+            <form ref={form} className="space-y-6" onSubmit={sendEmail}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">
-                    Subject
+                  <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400 font-bold block">
+                    OPERATOR NAME
                   </label>
-
                   <input
                     type="text"
-                    name="subject"
-                    placeholder="Project Inquiry"
+                    name="user_name"
+                    placeholder="e.g. Satoshi Nakamoto"
                     required
-                    className="w-full px-6 py-4 bg-white border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium text-slate-900"
+                    onFocus={() => sound.playHover()}
+                    className="w-full px-5 py-3.5 bg-slate-950/80 border border-slate-800 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all placeholder:text-slate-600"
                   />
                 </div>
 
-                {/* Message */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">
-                    Your Message
+                  <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400 font-bold block">
+                    TRANSMISSION ADDRESS (EMAIL)
                   </label>
-
-                  <textarea
-                    rows="5"
-                    name="message"
-                    placeholder="Tell me about your vision..."
+                  <input
+                    type="email"
+                    name="user_email"
+                    placeholder="operator@domain.com"
                     required
-                    className="w-full px-6 py-4 bg-white border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium text-slate-900 resize-none"
-                  ></textarea>
+                    onFocus={() => sound.playHover()}
+                    className="w-full px-5 py-3.5 bg-slate-950/80 border border-slate-800 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all placeholder:text-slate-600"
+                  />
                 </div>
+              </div>
 
-                {/* Button */}
-                <motion.button
-                  type="submit"
-                  className="w-full py-5 bg-slate-900 text-white rounded-2xl font-black flex items-center justify-center gap-3 hover:bg-indigo-600 transition-all shadow-xl shadow-slate-200"
-                  whileHover={{ y: -5 }}
-                  whileTap={{ scale: 0.98 }}
+              <div className="space-y-2">
+                <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400 font-bold block">
+                  TRANSMISSION SUBJECT
+                </label>
+                <input
+                  type="text"
+                  name="subject"
+                  placeholder="AI Model Deployment / Video Production Collaboration"
+                  required
+                  onFocus={() => sound.playHover()}
+                  className="w-full px-5 py-3.5 bg-slate-950/80 border border-slate-800 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all placeholder:text-slate-600"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-mono uppercase tracking-widest text-slate-400 font-bold block">
+                  PAYLOAD / MESSAGE
+                </label>
+                <textarea
+                  rows="5"
+                  name="message"
+                  placeholder="Detail your requirements, project scope, or vision..."
+                  required
+                  onFocus={() => sound.playHover()}
+                  className="w-full px-5 py-3.5 bg-slate-950/80 border border-slate-800 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all placeholder:text-slate-600 resize-none"
+                ></textarea>
+              </div>
+
+              {status.state !== 'idle' && (
+                <div
+                  className={`p-3.5 rounded-xl font-mono text-xs font-bold flex items-center gap-2 ${
+                    status.state === 'success'
+                      ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-500/30'
+                      : status.state === 'error'
+                      ? 'bg-rose-950/60 text-rose-400 border border-rose-500/30'
+                      : 'bg-cyan-950/60 text-cyan-400 border border-cyan-500/30'
+                  }`}
                 >
-                  Send Message <FaPaperPlane size={18} />
-                </motion.button>
+                  {status.state === 'success' ? (
+                    <FaCheck />
+                  ) : status.state === 'error' ? (
+                    <FaTriangleExclamation />
+                  ) : (
+                    <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                  )}
+                  <span>{status.message}</span>
+                </div>
+              )}
 
-              </form>
-
-            </div>
-          </div>
-
+              <motion.button
+                type="submit"
+                disabled={status.state === 'sending'}
+                onMouseEnter={() => sound.playHover()}
+                className="w-full py-4 bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 text-white rounded-xl font-mono text-sm font-bold tracking-wider flex items-center justify-center gap-3 shadow-[0_0_25px_rgba(0,245,255,0.3)] hover:shadow-[0_0_35px_rgba(0,245,255,0.5)] transition-all cursor-pointer disabled:opacity-50"
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                DISPATCH TRANSMISSION <FaPaperPlane size={14} />
+              </motion.button>
+            </form>
+          </Card3D>
         </div>
       </div>
     </motion.div>
