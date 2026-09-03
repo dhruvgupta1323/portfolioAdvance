@@ -30,18 +30,16 @@ const iconMap = {
 }
 
 const stats = [
-  { label: 'Deployed Projects', value: '12+', sub: 'Production & Edge' },
-  { label: 'Certifications', value: '05', sub: 'IIT & Stanford ML' },
-  { label: 'Years Experience', value: '02+', sub: 'AI & Data Science' },
-  { label: 'Media & Cinema', value: '4K', sub: 'Visual Storytelling' },
+  { label: 'Projects Completed', value: '12+', sub: 'Production & Edge' },
+  { label: 'Certifications', value: '04', sub: 'IIT & Stanford ML' },
+  { label: 'Experience', value: '02+', sub: 'Data Science & AI' },
 ]
 
 const roles = [
-  'AI / ML Systems Engineer',
-  'Computer Vision Specialist',
-  'Videographer & Film Editor',
-  'FastAPI Backend Architect',
-  'Data Science Trainee',
+  "AI / ML Developer",
+  "CSE Student",
+  "Data Scientist",
+  "Vision Specialist"
 ]
 
 function Home() {
@@ -134,7 +132,7 @@ function Home() {
 
             {/* Sub-headline / Mission */}
             <p className="text-lg md:text-xl text-slate-300 max-w-2xl mb-10 leading-relaxed font-normal">
-              Architecting <strong className="text-white font-semibold">on-device AI systems</strong>, low-latency computer vision pipelines, and directing <strong className="text-white font-semibold">cinematic video productions</strong> with rhythmic visual pacing.
+              Building intelligent, privacy-first AI solutions. Specialized in Computer Vision, NLP, and Production-ready ML systems that solve real-world problems.
             </p>
 
             {/* Interactive Action Buttons */}
@@ -164,7 +162,7 @@ function Home() {
             </div>
 
             {/* Live Stats Telemetry Matrix */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-8 border-t border-slate-800/80">
+            <div className="grid grid-cols-3 gap-4 pt-8 border-t border-slate-800/80">
               {stats.map((stat, i) => (
                 <div key={i} className="flex flex-col p-3 rounded-xl bg-slate-900/30 border border-slate-800/60 backdrop-blur-xs">
                   <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-cyan-300 font-mono">
